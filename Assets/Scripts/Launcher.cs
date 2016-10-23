@@ -14,6 +14,8 @@ public class Launcher : Photon.PunBehaviour
     [Tooltip("Game version number")] private static string Version = "1";
     [Tooltip("Port number that server sits on")] public int Port = 25827;
 
+    private TcpListener server;
+
     void Awake() {
         PhotonNetwork.logLevel = PhotonLogLevel.Full;
 
@@ -45,18 +47,9 @@ public class Launcher : Photon.PunBehaviour
     /// </summary>
     public override void OnCreatedRoom()
     {
-        TcpListener server = new TcpListener(IPAddress.Any, Port);
+        server = new TcpListener(IPAddress.Any, Port);
         server.Start();
-        new Thread(() =>
-            {
-                TcpClient client = server.AcceptTcpClient();
-                new Thread(() =>
-                {
-                    var steam = client.GetStream();
-                    steam.Write(Database.GetMeshAsBytes(), 0, Database.GetMeshAsBytes().Length);
-                }).Start();
-            }
-        ).Start();
+        server.BeginAcceptTcpClient(DoAcceptTcpClient, server);
     }
 
     public override void OnConnectedToMaster()
@@ -75,7 +68,7 @@ public class Launcher : Photon.PunBehaviour
         {
             Database.LoadMesh();
 
-            TcpListener server = new TcpListener(IPAddress.Any, Port + 1);
+            server = new TcpListener(IPAddress.Any, Port + 1);
             server.Start();
             new Thread(() =>
             {
@@ -90,14 +83,16 @@ public class Launcher : Photon.PunBehaviour
         // Connect to master client and receive meshes
         else
         {
-            photonView.RPC("SendMesh", PhotonTargets.MasterClient, photonView.owner.ID);
+            photonView.RPC("SendMesh", PhotonTargets.MasterClient, PhotonNetwork.player.ID);
         }
     }
 
     [PunRPC]
     public void SendMesh(int id)
     {
+        Debug.Log(GetLocalIpAddress() + ":" + Port);
         photonView.RPC("UpdateMesh", PhotonPlayer.Find(id), GetLocalIpAddress() + ":" + Port);
+
     }
 
     /// <summary>
@@ -163,6 +158,11 @@ public class Launcher : Photon.PunBehaviour
         TcpClient client = new TcpClient();
         client.Connect(ipAddress, port);
 
+        if (!client.Connected)
+        {
+            Debug.Log("Cannot connect to server");
+        }
+
         using (var networkStream = client.GetStream()) {
             byte[] data = new byte[1024];
 
@@ -177,5 +177,15 @@ public class Launcher : Photon.PunBehaviour
                 Database.UpdateMesh(ms.ToArray());
             }
         }
+    }
+
+    private void DoAcceptTcpClient(IAsyncResult result)
+    {
+        TcpClient client = server.EndAcceptTcpClient(result);
+        server.BeginAcceptTcpClient(DoAcceptTcpClient, server);
+        Debug.Log("Connection Accepted");
+        var steam = client.GetStream();
+        steam.Write(Database.GetMeshAsBytes(), 0, Database.GetMeshAsBytes().Length);
+        client.Close();
     }
 }

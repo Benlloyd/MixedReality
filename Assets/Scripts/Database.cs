@@ -24,7 +24,7 @@ public class Database : SpatialMappingSource {
     public SpatialMappingManager SpatialMappingManager;
     public static SpatialMappingManager MappingManager;
 
-    void Awake()
+    protected override void Awake()
     {
         base.Awake();
         MappingManager = SpatialMappingManager;
