@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MixedReality.CSharp.Plugins", "MixedReality.CSharp.Plugins.csproj", "{4E2C1F12-B771-80FC-48A3-7502563DF6FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MixedReality.CSharp", "MixedReality.CSharp.csproj", "{7C62A78A-E193-B61D-3E6B-6291BB8DB22F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MixedReality.CSharp.Editor", "MixedReality.CSharp.Editor.csproj", "{4D97B8B9-ED85-70D4-12DC-BD5C3A0884F5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4E2C1F12-B771-80FC-48A3-7502563DF6FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E2C1F12-B771-80FC-48A3-7502563DF6FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E2C1F12-B771-80FC-48A3-7502563DF6FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E2C1F12-B771-80FC-48A3-7502563DF6FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C62A78A-E193-B61D-3E6B-6291BB8DB22F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C62A78A-E193-B61D-3E6B-6291BB8DB22F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C62A78A-E193-B61D-3E6B-6291BB8DB22F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C62A78A-E193-B61D-3E6B-6291BB8DB22F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D97B8B9-ED85-70D4-12DC-BD5C3A0884F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D97B8B9-ED85-70D4-12DC-BD5C3A0884F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D97B8B9-ED85-70D4-12DC-BD5C3A0884F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D97B8B9-ED85-70D4-12DC-BD5C3A0884F5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

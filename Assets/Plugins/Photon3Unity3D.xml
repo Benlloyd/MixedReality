@@ -317,13 +317,13 @@
             in use (room names are their IDs).
             
             This method is used as general callback for all operations. Each response corresponds to a certain 
-            &quot;type&quot; of operation by its OperationCode (see: <see cref="!:Operations" />).
+            &quot;type&quot; of operation by its OperationCode.
             <para></para>
             </remarks>
             <example>
             When you join a room, the server will assign a consecutive number to each client: the 
             &quot;actorNr&quot; or &quot;player number&quot;. This is sent back in the OperationResult's 
-            Parameters as value of key <see cref="!:EventCode.ActorNr" />.<para></para>
+            Parameters as value of key <see cref="!:ParameterCode.ActorNr" />.<para></para>
             
             Fetch your actorNr of a Join response like this:<para></para>
             <c>int actorNr = (int)operationResponse[(byte)OperationCode.ActorNr];</c>
@@ -1122,7 +1122,7 @@
             Channel-less wrapper for OpCustom().
             </summary>
             <param name="customOpCode">Operations are handled by their byte\-typed code.
-            The codes of the &quot;LoadBalancong&quot; application are in the class <see cref="!:ExitGames.Client.Photon.LoadBalancing.OperationCode" />.</param>
+            The codes of the &quot;LoadBalancong&quot; application are in the class <see cref="!:LoadBalancing.OperationCode" />.</param>
             <param name="customOpParameters">Containing parameters as key\-value pair. The key is byte\-typed, while the value is any serializable datatype.</param>
             <param name="sendReliable">Selects if the operation must be acknowledged or not. If false, the
                                        operation is not guaranteed to reach the server.</param>
@@ -1137,7 +1137,6 @@
             byte, defined server side and known as operation code (opCode). Similarly, the operation's parameters
             are defined server side as byte keys of values, which a client sends as customOpParameters
             accordingly.<para></para>
-            This is explained in more detail as &quot;<see cref="!:Operations" text="Custom Operations" />&quot;.
             <param name="customOpCode">Operations are handled by their byte\-typed code. The codes of the
                                        &quot;LoadBalancing&quot; application are in the class <see cref="!:ExitGames.Client.Photon.LoadBalancing.OperationCode" />.</param>
             <param name="customOpParameters">Containing parameters as key\-value pair. The key is byte\-typed, while the value is any serializable datatype.</param>
@@ -1825,20 +1824,20 @@
             <returns>True if the Photon Ping could be sent.</returns>
         </member>
         <member name="M:ExitGames.Client.Photon.IPhotonSocket.TryParseAddress(System.String,System.String@,System.UInt16@,System.String@,System.String@)">
-            <summary>
-            Separates the given address into address (host name or IP) and port. Port must be included after colon!
-            </summary>
-            <remarks>
-            This method expects any address to include a port. The final ':' in addressAndPort has to separate it.
-            IPv6 addresses have multiple colons and <b>must use brackets</b> to separate address from port.
+             <summary>
+             Separates the given address into address (host name or IP) and port. Port must be included after colon!
+             </summary>
+             <remarks>
+             This method expects any address to include a port. The final ':' in addressAndPort has to separate it.
+             IPv6 addresses have multiple colons and <b>must use brackets</b> to separate address from port.
             
-            Examples:
-                ns.exitgames.com:5058
-                http://[2001:db8:1f70::999:de8:7648:6e8]:100/
-                [2001:db8:1f70::999:de8:7648:6e8]:100
-            See:
-                http://serverfault.com/questions/205793/how-can-one-distinguish-the-host-and-the-port-in-an-ipv6-url
-            </remarks>
+             Examples:
+                 ns.exitgames.com:5058
+                 http://[2001:db8:1f70::999:de8:7648:6e8]:100/
+                 [2001:db8:1f70::999:de8:7648:6e8]:100
+             See:
+                 http://serverfault.com/questions/205793/how-can-one-distinguish-the-host-and-the-port-in-an-ipv6-url
+             </remarks>
         </member>
         <member name="M:ExitGames.Client.Photon.IPhotonSocket.IsIpv6SimpleCheck(System.Net.IPAddress)">
             <summary>Implements a (very) simple test if a (valid) IPAddress is IPv6 by testing for colons (:).</summary>

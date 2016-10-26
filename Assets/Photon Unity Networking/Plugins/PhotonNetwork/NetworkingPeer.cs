@@ -2211,7 +2211,7 @@ internal class NetworkingPeer : LoadBalancingPeer, IPhotonPeerListener
                 int[] requestValues = (int[]) photonEvent.Parameters[ParameterCode.CustomEventContent];
                 int requestedViewId = requestValues[0];
                 int currentOwner = requestValues[1];
-                Debug.Log("Ev OwnershipRequest: " + photonEvent.Parameters.ToStringFull() + " ViewID: " + requestedViewId + " from: " + currentOwner + " Time: " + Environment.TickCount%1000);
+
 
                 PhotonView requestedView = PhotonView.Find(requestedViewId);
                 if (requestedView == null)
@@ -2220,7 +2220,8 @@ internal class NetworkingPeer : LoadBalancingPeer, IPhotonPeerListener
                     break;
                 }
 
-                Debug.Log("Ev OwnershipRequest PhotonView.ownershipTransfer: " + requestedView.ownershipTransfer + " .ownerId: " + requestedView.ownerId + " isOwnerActive: " + requestedView.isOwnerActive + ". This client's player: " + PhotonNetwork.player.ToStringFull());
+                if (PhotonNetwork.logLevel == PhotonLogLevel.Informational) 
+                    Debug.Log("Ev OwnershipRequest " + requestedView.ownershipTransfer + ". ActorNr: " +actorNr +" takes from: "+ currentOwner+ ". Current owner: " + requestedView.ownerId + " isOwnerActive: " + requestedView.isOwnerActive + ". This client's player: " + PhotonNetwork.player.ToStringFull());
 
                 switch (requestedView.ownershipTransfer)
                 {
@@ -2228,10 +2229,15 @@ internal class NetworkingPeer : LoadBalancingPeer, IPhotonPeerListener
                         Debug.LogWarning("Ownership mode == fixed. Ignoring request.");
                         break;
                     case OwnershipOption.Takeover:
-                        if (currentOwner == requestedView.ownerId)
+                        if (currentOwner == requestedView.ownerId || (requestedView.ownerId == this.mMasterClientId && currentOwner == this.mMasterClientId))
                         {
                             // a takeover is successful automatically, if taken from current owner
+							requestedView.OwnerShipWasTransfered = true;
                             requestedView.ownerId = actorNr;
+                            if (PhotonNetwork.logLevel == PhotonLogLevel.Informational)
+                            {
+                                Debug.LogWarning(requestedView + " ownership transfered to: "+ actorNr);
+                            }
                         }
                         break;
                     case OwnershipOption.Request:
@@ -2260,7 +2266,9 @@ internal class NetworkingPeer : LoadBalancingPeer, IPhotonPeerListener
                     PhotonView pv = PhotonView.Find(requestedViewId);
                     if (pv != null)
                     {
+						pv.OwnerShipWasTransfered = true;
                         pv.ownerId = newOwnerId;
+
                     }
 
                     break;
@@ -3797,11 +3805,12 @@ internal class NetworkingPeer : LoadBalancingPeer, IPhotonPeerListener
         // Debug.Log("OnLevelWasLoaded photonViewList.Count: " + photonViewList.Count); // Exit Games internal log
 
         List<int> removeKeys = new List<int>();
-        foreach (PhotonView view in this.photonViewList.Values)
+        foreach (KeyValuePair<int, PhotonView> kvp in this.photonViewList)
         {
+            PhotonView view = kvp.Value;
             if (view == null)
             {
-                removeKeys.Add(view.viewID);
+                removeKeys.Add(kvp.Key);
             }
         }
 
@@ -4065,6 +4074,8 @@ internal class NetworkingPeer : LoadBalancingPeer, IPhotonPeerListener
         }
 
 
+
+
         if (view.synchronization == ViewSynchronization.ReliableDeltaCompressed)
         {
             object[] uncompressed = this.DeltaCompressionRead(view.lastOnSerializeDataReceived, data);
@@ -4084,18 +4095,21 @@ internal class NetworkingPeer : LoadBalancingPeer, IPhotonPeerListener
             data = uncompressed;
         }
 
-        //// TODO: check if we really want to set the owner of a GO, based on who sends something about it.
-        //// this has nothing to do with reading the actual synchronization update.
-        //if (sender.ID != view.ownerId)
-        //{
-        //    if (!view.isSceneView || !sender.isMasterClient)
-        //    {
-        //        // obviously the owner changed and we didn't yet notice.
-        //        Debug.Log("Adjusting owner to sender of updates. From: " + view.ownerId + " to: " + sender.ID);
-        //        view.ownerId = sender.ID;
-        //    }
-        //}
-
+        // TODO: check if we really want to set the owner of a GO, based on who sends something about it.
+        // this has nothing to do with reading the actual synchronization update.
+        // This is when joining late to assign ownership to the sender
+        // this has nothing to do with reading the actual synchronization update.
+        // We don't do anything is OwnerShip Was Touched, which means we got the infos already. We only possibly act if ownership was never transfered.
+        if (sender.ID != view.ownerId && !view.OwnerShipWasTransfered)
+        {
+            if (!view.isSceneView || !sender.isMasterClient)
+            {
+                // obviously the owner changed and we didn't yet notice.
+                Debug.Log("Adjusting owner to sender of updates. From: " + view.ownerId + " to: " + sender.ID);
+                view.ownerId = sender.ID;
+            }
+        }
+		
         this.readStream.SetReadStream(data, 3);
         PhotonMessageInfo info = new PhotonMessageInfo(sender, networkTime, view);
 
