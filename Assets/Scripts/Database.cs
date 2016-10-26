@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using HoloToolkit.Unity;
+using UnityEngine.VR;
 
 public class Database : SpatialMappingSource {
     /// <summary>
@@ -70,6 +71,8 @@ public class Database : SpatialMappingSource {
         List<string> supportedDeviceList = new List<string>(VRSettings.supportedDevices);
         if (supportedDeviceList.Contains("HoloLens")) {
             Type = DeviceType.HoloLens;
+            //MappingManager.StartObserver();
+            Debug.Log("Start Observing");
         }
 #else
         Type = DeviceType.Desktop;
@@ -108,29 +111,10 @@ public class Database : SpatialMappingSource {
         // HoloLens will scan the room and creates mesh
         else if (Type == DeviceType.HoloLens)
         {
-            // The following code is copying from UWB-ARSandbox/Assets/Scripts/netWorkManager.cs:sendMeshToUnity()
-            List<MeshFilter> meshFilters = MappingManager.GetMeshFilters();
-            List<Mesh> meshes = new List<Mesh>();
-
-            foreach (var meshFilter in meshFilters)
-            {
-                Mesh mesh = meshFilter.sharedMesh;
-                Mesh clone = new Mesh();
-                List<Vector3> verts = new List<Vector3>();
-                verts.AddRange(mesh.vertices);
-
-                for (int i = 0; i < verts.Count; i++)
-                {
-                    verts[i] = meshFilter.transform.TransformPoint(verts[i]);
-                }
-
-                clone.SetVertices(verts);
-                clone.SetTriangles(mesh.triangles, 0);
-                meshes.Add(clone);
-            }
-
+            List<Mesh> meshes = MappingManager.GetMeshes();
             _mesh = SimpleMeshSerializer.Serialize(meshes);
         }
+        Debug.Log("Meshes loaded");
     }
 
     public static void SaveMesh()

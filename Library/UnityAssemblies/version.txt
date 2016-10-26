@@ -1,6 +1,6 @@
 5.4.0f3-HTP:2.3.0.0
-StandaloneWindows
-D:/Unity Hololens/Editor/Data/Managed/UnityEngine.dll
+WSAPlayer
+D:\Unity Hololens\Editor\Data\PlaybackEngines\MetroSupport/Tools/UnityEngine.dll
 D:/Unity Hololens/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll
 D:/Unity Hololens/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll
 D:/Unity Hololens/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll
